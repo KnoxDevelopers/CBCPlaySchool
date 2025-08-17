@@ -149,6 +149,12 @@
             background: linear-gradient(to bottom, #66ff33, #4cff00);
             transform: scale(1.05);
         }
+        #mathSettings {
+            display: block;
+        }
+        #languageSettings {
+            display: none;
+        }
         canvas {
             display: block;
         }
@@ -178,14 +184,29 @@
                     <option value="language">Language</option>
                 </select>
             </div>
-            <div class="setting-group">
-                <label for="minNum">Min Number:</label>
-                <input type="number" id="minNum" value="1" min="0" max="100">
+            
+            <div id="mathSettings">
+                <div class="setting-group">
+                    <label for="minNum">Min Number:</label>
+                    <input type="number" id="minNum" value="1" min="0" max="100">
+                </div>
+                <div class="setting-group">
+                    <label for="maxNum">Max Number:</label>
+                    <input type="number" id="maxNum" value="20" min="1" max="1000">
+                </div>
             </div>
-            <div class="setting-group">
-                <label for="maxNum">Max Number:</label>
-                <input type="number" id="maxNum" value="20" min="1" max="1000">
+            
+            <div id="languageSettings">
+                <div class="setting-group">
+                    <label for="languageLevel">Language Level:</label>
+                    <select id="languageLevel">
+                        <option value="playgroup">Play Group (Easy)</option>
+                        <option value="jss">JSS (Medium)</option>
+                        <option value="sss">SSS (Hard)</option>
+                    </select>
+                </div>
             </div>
+            
             <button id="startBtn">Start Game</button>
         </div>
     </div>
@@ -201,7 +222,8 @@
         let answerElements = [];
         let gameMode = "math";
         let minNum = 1;
-        let maxNum = 10;
+        let maxNum = 20;
+        let languageLevel = "playgroup";
         
         // Canvas setup
         const canvas = document.createElement('canvas');
@@ -223,7 +245,7 @@
             width: 80,
             height: 80,
             velocityY: 0,
-            jumpPower: -28,
+            jumpPower: -30,
             gravity: 0.8,
             speed: 8,
             isJumping: false
@@ -235,19 +257,52 @@
             height: 70
         };
         
-        // Language questions database
-        const languageQuestions = [
-            { question: "What is the opposite of 'Happy'?", answers: ["Sad", "Angry", "Excited", "Joyful"] },
-            { question: "What is the opposite of 'Hot'?", answers: ["Cold", "Warm", "Cool", "Freezing"] },
-            { question: "What is the opposite of 'Big'?", answers: ["Small", "Tiny", "Large", "Huge"] },
-            { question: "What is the opposite of 'Fast'?", answers: ["Slow", "Quick", "Rapid", "Speedy"] },
-            { question: "What is the opposite of 'Light'?", answers: ["Dark", "Heavy", "Bright", "Dim"] },
-            { question: "What is the opposite of 'Up'?", answers: ["Down", "Below", "Under", "Bottom"] },
-            { question: "Complete: The cat is ___ the table", answers: ["under", "on", "beside", "near"] },
-            { question: "Complete: I go to school ___ bus", answers: ["by", "on", "in", "with"] },
-            { question: "Choose the correct spelling:", answers: ["Beautiful", "Beutiful", "Beatiful", "Bueatiful"] },
-            { question: "Choose the correct spelling:", answers: ["Restaurant", "Restarant", "Resturant", "Restauraunt"] }
+        // Play Group Language Questions (Easy)
+        const playGroupQuestions = [
+            { question: "What color is the sky?", answers: ["Blue", "Green", "Red", "Yellow"] },
+            { question: "How many legs does a cat have?", answers: ["4", "2", "6", "8"] },
+            { question: "What do you use to eat soup?", answers: ["Spoon", "Fork", "Knife", "Plate"] },
+            { question: "Which animal says 'Moo'?", answers: ["Cow", "Dog", "Cat", "Pig"] },
+            { question: "What shape is a ball?", answers: ["Round", "Square", "Triangle", "Rectangle"] },
+            { question: "What do you wear on your feet?", answers: ["Shoes", "Hat", "Gloves", "Shirt"] },
+            { question: "How many fingers do you have?", answers: ["5", "4", "6", "10"] },
+            { question: "What do birds have that helps them fly?", answers: ["Wings", "Feet", "Tail", "Beak"] }
         ];
+        
+        // JSS Language Questions (Medium)
+        const jssQuestions = [
+            { question: "What is the past tense of 'go'?", answers: ["Went", "Goed", "Gone", "Going"] },
+            { question: "Which word is a noun?", answers: ["Apple", "Run", "Quickly", "Beautiful"] },
+            { question: "What is the opposite of 'begin'?", answers: ["End", "Start", "Continue", "Finish"] },
+            { question: "Choose the correct sentence:", answers: ["She likes apples.", "She like apples.", "She liking apples.", "She liked apples."] },
+            { question: "Which word rhymes with 'cat'?", answers: ["Bat", "Dog", "Fish", "Bird"] },
+            { question: "What is a synonym for 'happy'?", answers: ["Joyful", "Sad", "Angry", "Tired"] },
+            { question: "Which is a verb?", answers: ["Running", "Beautiful", "Quickly", "House"] },
+            { question: "How many syllables are in 'butterfly'?", answers: ["3", "2", "4", "5"] }
+        ];
+        
+        // SSS Language Questions (Hard)
+        const sssQuestions = [
+            { question: "What figure of speech is 'The world is a stage'?", answers: ["Metaphor", "Simile", "Personification", "Hyperbole"] },
+            { question: "What is the plural of 'cactus'?", answers: ["Cacti", "Cactuses", "Cactuss", "Cacti's"] },
+            { question: "Which is an example of alliteration?", answers: ["Peter Piper picked", "The cat sat", "Big bad wolf", "Red rose"] },
+            { question: "What is the main verb in 'She has been running'?", answers: ["Running", "Has", "Been", "She"] },
+            { question: "What type of sentence is 'What a beautiful day!'?", answers: ["Exclamatory", "Interrogative", "Declarative", "Imperative"] },
+            { question: "Which word is an adjective?", answers: ["Beautiful", "Quickly", "Running", "Happiness"] },
+            { question: "What is the subject in 'The tall man walked slowly'?", answers: ["Man", "Tall", "Walked", "Slowly"] },
+            { question: "What is a conjunction?", answers: ["And", "Run", "Beautiful", "Quickly"] }
+        ];
+        
+        // Show/hide settings based on game mode
+        document.getElementById('gameMode').addEventListener('change', function() {
+            if (this.value === 'math') {
+                document.getElementById('mathSettings').style.display = 'block';
+                document.getElementById('languageSettings').style.display = 'none';
+            } else {
+                document.getElementById('mathSettings').style.display = 'none';
+                document.getElementById('languageSettings').style.display = 'block';
+            }
+        });
         
         // Generate a new math question
         function generateMathQuestion() {
@@ -299,11 +354,25 @@
             answers.sort(() => Math.random() - 0.5);
         }
         
-        // Generate a new language question
+        // Generate a language question based on level
         function generateLanguageQuestion() {
+            let questions = [];
+            
+            switch(languageLevel) {
+                case "playgroup":
+                    questions = playGroupQuestions;
+                    break;
+                case "jss":
+                    questions = jssQuestions;
+                    break;
+                case "sss":
+                    questions = sssQuestions;
+                    break;
+            }
+            
             // Randomly select a language question
-            const qIndex = Math.floor(Math.random() * languageQuestions.length);
-            const question = languageQuestions[qIndex];
+            const qIndex = Math.floor(Math.random() * questions.length);
+            const question = questions[qIndex];
             
             currentQuestion = question.question;
             correctAnswer = question.answers[0];
@@ -591,13 +660,18 @@
         function startGame() {
             // Get settings
             gameMode = document.getElementById('gameMode').value;
-            minNum = parseInt(document.getElementById('minNum').value);
-            maxNum = parseInt(document.getElementById('maxNum').value);
             
-            // Validate numbers
-            if (minNum >= maxNum) {
-                alert("Min number must be less than Max number!");
-                return;
+            if (gameMode === "math") {
+                minNum = parseInt(document.getElementById('minNum').value);
+                maxNum = parseInt(document.getElementById('maxNum').value);
+                
+                // Validate numbers
+                if (minNum >= maxNum) {
+                    alert("Min number must be less than Max number!");
+                    return;
+                }
+            } else {
+                languageLevel = document.getElementById('languageLevel').value;
             }
             
             // Hide settings panel

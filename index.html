@@ -158,6 +158,20 @@
         canvas {
             display: block;
         }
+        #soundToggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: 2px solid #4cff00;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 20;
+        }
     </style>
 </head>
 <body>
@@ -192,7 +206,7 @@
                 </div>
                 <div class="setting-group">
                     <label for="maxNum">Max Number:</label>
-                    <input type="number" id="maxNum" value="20" min="1" max="1000">
+                    <input type="number" id="maxNum" value="10" min="1" max="1000">
                 </div>
             </div>
             
@@ -209,6 +223,7 @@
             
             <button id="startBtn">Start Game</button>
         </div>
+        <button id="soundToggle">🔊</button>
     </div>
 
     <script>
@@ -224,6 +239,87 @@
         let minNum = 1;
         let maxNum = 20;
         let languageLevel = "playgroup";
+        let soundEnabled = true;
+        
+        // Audio context for sound generation
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        
+        // Sound functions
+        function playCorrectSound() {
+            if (!soundEnabled) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        }
+        
+        function playWrongSound() {
+            if (!soundEnabled) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+            
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.8);
+        }
+        
+        function playJumpSound() {
+            if (!soundEnabled) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(330, audioCtx.currentTime); // E4
+            oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.2);
+        }
+        
+        function playBackgroundMusic() {
+            if (!soundEnabled) return;
+            // Simple background music loop using oscillators
+            const now = audioCtx.currentTime;
+            
+            for (let i = 0; i < 8; i++) {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.type = 'sine';
+                const notes = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C
+                oscillator.frequency.setValueAtTime(notes[i % notes.length], now + i * 0.5);
+                gainNode.gain.setValueAtTime(0.1, now + i * 0.5);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + i * 0.5 + 0.4);
+                
+                oscillator.start(now + i * 0.5);
+                oscillator.stop(now + i * 0.5 + 0.5);
+            }
+        }
         
         // Canvas setup
         const canvas = document.createElement('canvas');
@@ -302,6 +398,12 @@
                 document.getElementById('mathSettings').style.display = 'none';
                 document.getElementById('languageSettings').style.display = 'block';
             }
+        });
+        
+        // Toggle sound
+        document.getElementById('soundToggle').addEventListener('click', function() {
+            soundEnabled = !soundEnabled;
+            this.textContent = soundEnabled ? '🔊' : '🔇';
         });
         
         // Generate a new math question
@@ -563,6 +665,9 @@
                         // Create particle effect
                         createParticles(ans.x, ans.y, '#4cff00');
                         
+                        // Play correct sound
+                        playCorrectSound();
+                        
                         // Remove collected answer
                         answerElements.splice(i, 1);
                         
@@ -573,6 +678,9 @@
                         lives--;
                         document.getElementById('livesBox').textContent = `Lives: ${lives}`;
                         createParticles(ans.x, ans.y, '#ff3366');
+                        
+                        // Play wrong sound
+                        playWrongSound();
                         
                         // Remove collected answer
                         answerElements.splice(i, 1);
@@ -680,6 +788,9 @@
             // Start game
             gameActive = true;
             resetGame();
+            
+            // Play background music
+            playBackgroundMusic();
         }
         
         // Jump function
@@ -688,6 +799,7 @@
             if (!player.isJumping) {
                 player.velocityY = player.jumpPower;
                 player.isJumping = true;
+                playJumpSound();
             }
         }
         

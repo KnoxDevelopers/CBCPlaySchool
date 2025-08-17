@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purple Monster Quiz</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        #uiContainer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 15px;
+            color: white;
+            max-width: 300px;
+        }
+        #questionBox {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        #scoreBox {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #4cff00;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        #livesBox {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff3366;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 100;
+            display: none;
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+        #finalScore {
+            font-size: 2.5em;
+            color: #ffcc00;
+            margin: 20px 0;
+        }
+        #restartBtn {
+            background: linear-gradient(to bottom, #ff3366, #cc0066);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        #restartBtn:hover {
+            background: linear-gradient(to bottom, #ff6699, #ff0066);
+            transform: scale(1.05);
+        }
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            max-width: 300px;
+        }
+        #settingsPanel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 100;
+            border: 3px solid #4cff00;
+            box-shadow: 0 0 30px rgba(76, 255, 0, 0.5);
+        }
+        #settingsPanel h2 {
+            color: #ffcc00;
+            margin-top: 0;
+        }
+        .setting-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        input, select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 2px solid #4cff00;
+            background: #333;
+            color: white;
+            font-size: 1em;
+            width: 100px;
+            text-align: center;
+        }
+        #startBtn {
+            background: linear-gradient(to bottom, #4cff00, #33cc00);
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+        #startBtn:hover {
+            background: linear-gradient(to bottom, #66ff33, #4cff00);
+            transform: scale(1.05);
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="uiContainer">
+            <div id="questionBox">Choose your game mode!</div>
+            <div id="scoreBox">Score: 0</div>
+            <div id="livesBox">Lives: 3</div>
+        </div>
+        <div id="instructions">
+            Use arrow keys to move and SPACE to jump. Capture the correct answers!
+        </div>
+        <div id="gameOver">
+            <h2>Game Over!</h2>
+            <div id="finalScore">Score: 0</div>
+            <button id="restartBtn">Play Again</button>
+        </div>
+        <div id="settingsPanel">
+            <h2>Game Settings</h2>
+            <div class="setting-group">
+                <label for="gameMode">Game Mode:</label>
+                <select id="gameMode">
+                    <option value="math">Math</option>
+                    <option value="language">Language</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label for="minNum">Min Number:</label>
+                <input type="number" id="minNum" value="1" min="0" max="100">
+            </div>
+            <div class="setting-group">
+                <label for="maxNum">Max Number:</label>
+                <input type="number" id="maxNum" value="20" min="1" max="1000">
+            </div>
+            <button id="startBtn">Start Game</button>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        let score = 0;
+        let lives = 3;
+        let gameActive = false;
+        let currentQuestion = "";
+        let correctAnswer = 0;
+        let answers = [];
+        let answerElements = [];
+        let gameMode = "math";
+        let minNum = 1;
+        let maxNum = 10;
+        
+        // Canvas setup
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        document.getElementById('gameContainer').appendChild(canvas);
+        
+        // Set canvas to full window size
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Player (Purple Monster)
+        const player = {
+            x: 100,
+            y: canvas.height - 150,
+            width: 80,
+            height: 80,
+            velocityY: 0,
+            jumpPower: -28,
+            gravity: 0.8,
+            speed: 8,
+            isJumping: false
+        };
+        
+        // Ground
+        const ground = {
+            y: canvas.height - 70,
+            height: 70
+        };
+        
+        // Language questions database
+        const languageQuestions = [
+            { question: "What is the opposite of 'Happy'?", answers: ["Sad", "Angry", "Excited", "Joyful"] },
+            { question: "What is the opposite of 'Hot'?", answers: ["Cold", "Warm", "Cool", "Freezing"] },
+            { question: "What is the opposite of 'Big'?", answers: ["Small", "Tiny", "Large", "Huge"] },
+            { question: "What is the opposite of 'Fast'?", answers: ["Slow", "Quick", "Rapid", "Speedy"] },
+            { question: "What is the opposite of 'Light'?", answers: ["Dark", "Heavy", "Bright", "Dim"] },
+            { question: "What is the opposite of 'Up'?", answers: ["Down", "Below", "Under", "Bottom"] },
+            { question: "Complete: The cat is ___ the table", answers: ["under", "on", "beside", "near"] },
+            { question: "Complete: I go to school ___ bus", answers: ["by", "on", "in", "with"] },
+            { question: "Choose the correct spelling:", answers: ["Beautiful", "Beutiful", "Beatiful", "Bueatiful"] },
+            { question: "Choose the correct spelling:", answers: ["Restaurant", "Restarant", "Resturant", "Restauraunt"] }
+        ];
+        
+        // Generate a new math question
+        function generateMathQuestion() {
+            const operations = [
+                { symbol: '+', method: (a, b) => a + b },
+                { symbol: '-', method: (a, b) => a - b },
+                { symbol: '×', method: (a, b) => a * b }
+            ];
+            
+            // Randomly select an operation
+            const opIndex = Math.floor(Math.random() * operations.length);
+            const operation = operations[opIndex];
+            
+            // Generate numbers based on user settings
+            let num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            let num2 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            
+            // For subtraction, ensure positive result
+            if (operation.symbol === '-' && num1 < num2) {
+                [num1, num2] = [num2, num1];
+            }
+            
+            // Calculate correct answer
+            correctAnswer = operation.method(num1, num2);
+            currentQuestion = `${num1} ${operation.symbol} ${num2} = ?`;
+            
+            // Update question display
+            document.getElementById('questionBox').textContent = currentQuestion;
+            
+            // Generate wrong answers
+            answers = [correctAnswer];
+            while (answers.length < 4) {
+                let wrongAnswer;
+                if (Math.random() > 0.5) {
+                    // Close but wrong answer
+                    wrongAnswer = correctAnswer + Math.floor(Math.random() * 5) + 1;
+                } else {
+                    // More random wrong answer
+                    wrongAnswer = Math.floor(Math.random() * (maxNum * 2)) + 1;
+                }
+                
+                // Ensure no duplicates
+                if (!answers.includes(wrongAnswer)) {
+                    answers.push(wrongAnswer);
+                }
+            }
+            
+            // Shuffle answers
+            answers.sort(() => Math.random() - 0.5);
+        }
+        
+        // Generate a new language question
+        function generateLanguageQuestion() {
+            // Randomly select a language question
+            const qIndex = Math.floor(Math.random() * languageQuestions.length);
+            const question = languageQuestions[qIndex];
+            
+            currentQuestion = question.question;
+            correctAnswer = question.answers[0];
+            
+            // Update question display
+            document.getElementById('questionBox').textContent = currentQuestion;
+            
+            // Shuffle answers
+            answers = [...question.answers];
+            answers.sort(() => Math.random() - 0.5);
+        }
+        
+        // Generate a new question based on game mode
+        function generateQuestion() {
+            if (gameMode === "math") {
+                generateMathQuestion();
+            } else {
+                generateLanguageQuestion();
+            }
+            
+            // Create answer elements
+            answerElements = [];
+            for (let i = 0; i < answers.length; i++) {
+                answerElements.push({
+                    value: answers[i],
+                    x: canvas.width + i * 300,
+                    y: Math.random() * (canvas.height - 250) + 50,
+                    width: 70,
+                    height: 50,
+                    speed: 3 + Math.random() * 2,
+                    color: '#ff3366' // Same color for all answers
+                });
+            }
+        }
+        
+        // Draw player (Purple Monster)
+        function drawPlayer() {
+            ctx.fillStyle = '#8A2BE2'; // Purple base color
+            
+            // Draw monster body
+            ctx.beginPath();
+            ctx.arc(player.x + player.width/2, player.y + player.height/2, player.width/2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw eyes
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(player.x + player.width/2 - 15, player.y + player.height/2 - 10, 12, 0, Math.PI * 2);
+            ctx.arc(player.x + player.width/2 + 15, player.y + player.height/2 - 10, 12, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw pupils
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(player.x + player.width/2 - 15, player.y + player.height/2 - 10, 6, 0, Math.PI * 2);
+            ctx.arc(player.x + player.width/2 + 15, player.y + player.height/2 - 10, 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw mouth
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(player.x + player.width/2, player.y + player.height/2 + 10, 20, 0.2, Math.PI - 0.2);
+            ctx.stroke();
+        }
+        
+        // Draw ground
+        function drawGround() {
+            // Ground
+            ctx.fillStyle = '#7CFC00';
+            ctx.fillRect(0, ground.y, canvas.width, ground.height);
+            
+            // Ground details
+            ctx.fillStyle = '#5cb300';
+            for (let i = 0; i < canvas.width; i += 40) {
+                ctx.fillRect(i, ground.y, 20, 10);
+            }
+            
+            // Ground border
+            ctx.strokeStyle = '#3d7d00';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, ground.y);
+            ctx.lineTo(canvas.width, ground.y);
+            ctx.stroke();
+        }
+        
+        // Draw answers
+        function drawAnswers() {
+            for (let i = 0; i < answerElements.length; i++) {
+                const ans = answerElements[i];
+                
+                // Draw answer bubble
+                ctx.fillStyle = ans.color;
+                ctx.beginPath();
+                ctx.arc(ans.x, ans.y, ans.width/2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw white border
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(ans.x, ans.y, ans.width/2, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Draw answer text
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 20px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                // Wrap text if too long
+                const text = ans.value.toString();
+                if (text.length > 8) {
+                    ctx.font = 'bold 16px Arial';
+                }
+                ctx.fillText(text, ans.x, ans.y);
+            }
+        }
+        
+        // Draw background
+        function drawBackground() {
+            // Sky gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#1E90FF');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw clouds
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            for (let i = 0; i < 5; i++) {
+                const x = (i * 300 + (Date.now() / 50) % 300) % (canvas.width + 200) - 100;
+                const y = 70 + Math.sin(i) * 30;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.arc(x + 25, y - 15, 25, 0, Math.PI * 2);
+                ctx.arc(x + 50, y, 30, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Update game state
+        function update() {
+            if (!gameActive) return;
+            
+            // Apply gravity
+            player.velocityY += player.gravity;
+            player.y += player.velocityY;
+            
+            // Ground collision
+            if (player.y + player.height > ground.y) {
+                player.y = ground.y - player.height;
+                player.velocityY = 0;
+                player.isJumping = false;
+            }
+            
+            // Screen boundaries
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+            
+            // Update answer positions
+            for (let i = answerElements.length - 1; i >= 0; i--) {
+                const ans = answerElements[i];
+                ans.x -= ans.speed;
+                
+                // Remove answers that go off screen
+                if (ans.x + ans.width < 0) {
+                    answerElements.splice(i, 1);
+                    
+                    // If all answers are gone, regenerate question
+                    if (answerElements.length === 0) {
+                        generateQuestion();
+                    }
+                }
+                
+                // Collision detection
+                const distX = Math.abs(player.x + player.width/2 - (ans.x));
+                const distY = Math.abs(player.y + player.height/2 - (ans.y));
+                const distance = Math.sqrt(distX * distX + distY * distY);
+                
+                if (distance < (player.width/2 + ans.width/2)) {
+                    if (ans.value === correctAnswer) {
+                        // Correct answer collected
+                        score += 10;
+                        document.getElementById('scoreBox').textContent = `Score: ${score}`;
+                        
+                        // Create particle effect
+                        createParticles(ans.x, ans.y, '#4cff00');
+                        
+                        // Remove collected answer
+                        answerElements.splice(i, 1);
+                        
+                        // Generate new question immediately
+                        generateQuestion();
+                    } else {
+                        // Wrong answer collected - lose a life
+                        lives--;
+                        document.getElementById('livesBox').textContent = `Lives: ${lives}`;
+                        createParticles(ans.x, ans.y, '#ff3366');
+                        
+                        // Remove collected answer
+                        answerElements.splice(i, 1);
+                        
+                        // Check if game over
+                        if (lives <= 0) {
+                            endGame();
+                        } else {
+                            // Generate new question
+                            generateQuestion();
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Create particles for effects
+        const particles = [];
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 20; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    size: Math.random() * 8 + 4,
+                    speedX: (Math.random() - 0.5) * 10,
+                    speedY: (Math.random() - 0.5) * 10,
+                    color: color,
+                    alpha: 1,
+                    life: Math.random() * 30 + 20
+                });
+            }
+        }
+        
+        // Update particles
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.speedX;
+                p.y += p.speedY;
+                p.alpha -= 0.02;
+                p.life--;
+                
+                if (p.life <= 0 || p.alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+        
+        // Draw particles
+        function drawParticles() {
+            for (const p of particles) {
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+        }
+        
+        // End game function
+        function endGame() {
+            gameActive = false;
+            document.getElementById('finalScore').textContent = `Score: ${score}`;
+            document.getElementById('gameOver').style.display = 'block';
+        }
+        
+        // Reset game function
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            gameActive = true;
+            player.x = 100;
+            player.y = canvas.height - 150;
+            player.velocityY = 0;
+            document.getElementById('scoreBox').textContent = `Score: ${score}`;
+            document.getElementById('livesBox').textContent = `Lives: ${lives}`;
+            document.getElementById('gameOver').style.display = 'none';
+            particles.length = 0;
+            answerElements = []; // Clear existing answers
+            generateQuestion();
+        }
+        
+        // Start game function
+        function startGame() {
+            // Get settings
+            gameMode = document.getElementById('gameMode').value;
+            minNum = parseInt(document.getElementById('minNum').value);
+            maxNum = parseInt(document.getElementById('maxNum').value);
+            
+            // Validate numbers
+            if (minNum >= maxNum) {
+                alert("Min number must be less than Max number!");
+                return;
+            }
+            
+            // Hide settings panel
+            document.getElementById('settingsPanel').style.display = 'none';
+            
+            // Start game
+            gameActive = true;
+            resetGame();
+        }
+        
+        // Jump function
+        function jump() {
+            if (!gameActive) return;
+            if (!player.isJumping) {
+                player.velocityY = player.jumpPower;
+                player.isJumping = true;
+            }
+        }
+        
+        // Move player
+        function move(direction) {
+            if (!gameActive) return;
+            player.x += player.speed * direction;
+        }
+        
+        // Key bindings
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === ' ' || e.key === 'w') {
+                jump();
+            } else if (e.key === 'ArrowLeft' || e.key === 'a') {
+                move(-1);
+            } else if (e.key === 'ArrowRight' || e.key === 'd') {
+                move(1);
+            } else if (e.key === 'r') {
+                if (!gameActive) resetGame();
+            }
+        });
+        
+        // Mobile touch controls
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+        
+        // Event listeners
+        document.getElementById('startBtn').addEventListener('click', startGame);
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('settingsPanel').style.display = 'block';
+        });
+        
+        // Main game loop
+        function gameLoop() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw everything
+            drawBackground();
+            drawGround();
+            drawAnswers();
+            drawPlayer();
+            drawParticles();
+            
+            // Update game state
+            update();
+            updateParticles();
+            
+            // Continue game loop
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Initialize game
+        gameLoop();
+    </script>
+</body>
+</html>

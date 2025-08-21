@@ -267,7 +267,7 @@
 <body>
     <div id="gameContainer">
         <div id="uiContainer">
-            <div id="questionBox">Choose your game mode!</div>
+            <div id="questionBox">Choose your game mode</div>
             <div id="scoreBox">Score: 0</div>
             <div id="livesBox">Lives: 3</div>
         </div>
@@ -330,7 +330,6 @@
     </div>
 
     <script>
-        // Game variables
         let score = 0;
         let lives = 3;
         let gameActive = false;
@@ -343,19 +342,17 @@
         let maxNum = 10;
         let languageLevel = "playgroup";
         let soundEnabled = true;
-        
-        // New variables for features
-        let correctStreak = 0; // Track consecutive correct answers
-        let totalCorrectAnswers = 0; // Track total correct answers
-        let earnedStars = 0; // Track earned stars
-        let earnedBadges = []; // Track earned badges
-        let questionsAnswered = 0; // Track total questions answered
-        let levelComplete = false; // Track if level is complete
+        let correctStreak = 0; 
+        let totalCorrectAnswers = 0; 
+        let earnedStars = 0; 
+        let earnedBadges = []; 
+        let questionsAnswered = 0; 
+        let levelComplete = false;
         
         // Monster animation variables
         let isBiting = false;
         let biteStartTime = 0;
-        let biteDuration = 300; // 300ms bite animation
+        let biteDuration = 300; 
         
         // Badge definitions
         const badges = [
@@ -365,11 +362,10 @@
             { id: "star_collector", name: "Star Collector", description: "Earn 3 stars", requirement: 3, type: "stars" }
         ];
         
-        // Audio context for sound generation
+       
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
         
-        // Sound functions
         function playCorrectSound() {
             if (!soundEnabled) return;
             const oscillator = audioCtx.createOscillator();
@@ -442,7 +438,6 @@
         
         function playBackgroundMusic() {
             if (!soundEnabled) return;
-            // Simple background music loop using oscillators
             const now = audioCtx.currentTime;
             
             for (let i = 0; i < 8; i++) {
@@ -453,7 +448,7 @@
                 gainNode.connect(audioCtx.destination);
                 
                 oscillator.type = 'sine';
-                const notes = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C
+                const notes = [261.63, 329.63, 392.00, 523.25]; 
                 oscillator.frequency.setValueAtTime(notes[i % notes.length], now + i * 0.5);
                 gainNode.gain.setValueAtTime(0.1, now + i * 0.5);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, now + i * 0.5 + 0.4);
@@ -463,7 +458,6 @@
             }
         }
         
-        // Play star earn sound
         function playStarSound() {
             if (!soundEnabled) return;
             const oscillator = audioCtx.createOscillator();
@@ -473,8 +467,8 @@
             gainNode.connect(audioCtx.destination);
             
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
-            oscillator.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.5); // A6
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
+            oscillator.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.5);
             gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
             
@@ -482,7 +476,6 @@
             oscillator.stop(audioCtx.currentTime + 0.5);
         }
         
-        // Play badge earn sound
         function playBadgeSound() {
             if (!soundEnabled) return;
             const oscillator = audioCtx.createOscillator();
@@ -508,7 +501,6 @@
         const ctx = canvas.getContext('2d');
         document.getElementById('gameContainer').appendChild(canvas);
         
-        // Set canvas to full window size
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -516,7 +508,7 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         
-        // Player (Purple Monster)
+        //Purple Monster
         const player = {
             x: 100,
             y: canvas.height - 150,
@@ -535,7 +527,6 @@
             height: 70
         };
         
-        // Play Group Language Questions (Easy)
         const playGroupQuestions = [
             { question: "What color is the sky?", answers: ["Blue", "Green", "Red", "Yellow"] },
             { question: "How many legs does a cat have?", answers: ["4", "2", "6", "8"] },
@@ -565,7 +556,6 @@
             { question: "What do birds have that helps them fly?", answers: ["Wings", "Feet", "Tail", "Beak"] }
         ];
         
-        // JSS Language Questions (Medium)
         const jssQuestions = [
             { question: "What is the past tense of 'go'?", answers: ["Went", "Goed", "Gone", "Going"] },
             { question: "Which word is a noun?", answers: ["Apple", "Run", "Quickly", "Beautiful"] },
@@ -577,7 +567,6 @@
             { question: "How many syllables are in 'butterfly'?", answers: ["3", "2", "4", "5"] }
         ];
         
-        // SSS Language Questions (Hard)
         const sssQuestions = [
             { question: "What figure of speech is 'The world is a stage'?", answers: ["Metaphor", "Simile", "Personification", "Hyperbole"] },
             { question: "What is the plural of 'cactus'?", answers: ["Cacti", "Cactuses", "Cactuss", "Cacti's"] },
@@ -589,59 +578,57 @@
             { question: "What is a conjunction?", answers: ["And", "Run", "Beautiful", "Quickly"] }
         ];
         
-        // Counting questions data
         const countingQuestions = [
             { 
                 question: "How many apples are there?",
-                image: "🍎🍎🍎", // 3 apples
+                image: "🍎🍎🍎", 
                 answer: 3,
                 wrongAnswers: [1, 2, 4]
             },
             { 
                 question: "Count the stars:",
-                image: "⭐⭐⭐⭐", // 4 stars
+                image: "⭐⭐⭐⭐",
                 answer: 4,
                 wrongAnswers: [2, 3, 5]
             },
             { 
                 question: "How many balloons?",
-                image: "🎈🎈", // 2 balloons
+                image: "🎈🎈", 
                 answer: 2,
                 wrongAnswers: [1, 3, 4]
             },
             { 
                 question: "Count the cars:",
-                image: "🚗🚗🚗🚗🚗", // 5 cars
+                image: "🚗🚗🚗🚗🚗", 
                 answer: 5,
                 wrongAnswers: [3, 4, 6]
             },
             { 
                 question: "How many cats?",
-                image: "🐱🐱🐱🐱", // 4 cats
+                image: "🐱🐱🐱🐱", 
                 answer: 4,
                 wrongAnswers: [6, 5, 7]
             },
             { 
                 question: "Count the flowers:",
-                image: "🌸🌸🌸🌸🌸🌸🌸", // 7 flowers
+                image: "🌸🌸🌸🌸🌸🌸🌸",
                 answer: 7,
                 wrongAnswers: [5, 6, 8]
             },
             { 
                 question: "How many dogs?",
-                image: "🐶🐶🐶🐶🐶", // 5 dogs
+                image: "🐶🐶🐶🐶🐶",
                 answer: 5,
                 wrongAnswers: [6, 7, 9]
             },
             { 
                 question: "Count the birds:",
-                image: "🐦🐦🐦🐦", // 4 birds
+                image: "🐦🐦🐦🐦", 
                 answer: 4,
                 wrongAnswers: [3, 5, 6]
             }
         ];
         
-        // Show/hide settings based on game mode
         document.getElementById('gameMode').addEventListener('change', function() {
             if (this.value === 'math') {
                 document.getElementById('mathSettings').style.display = 'block';
@@ -652,15 +639,12 @@
             }
         });
         
-        // Toggle sound
         document.getElementById('soundToggle').addEventListener('click', function() {
             soundEnabled = !soundEnabled;
             this.textContent = soundEnabled ? '🔊' : '🔇';
         });
         
-        // Generate a new math question
         function generateMathQuestion() {
-            // Randomly choose between regular math and counting questions (50/50 chance)
             if (Math.random() > 0.5 && maxNum <= 10) {
                 generateCountingQuestion();
                 return;
@@ -669,80 +653,118 @@
             const operations = [
                 { symbol: '+', method: (a, b) => a + b },
                 { symbol: '-', method: (a, b) => a - b },
-                { symbol: '×', method: (a, b) => a * b }
+                { symbol: '×', method: (a, b) => a * b },
+                { symbol: '÷', method: (a, b) => b !== 0 ? a / b : a },
+                // { symbol: '%', method: (a, b) => a % b },
+                // { symbol: '√', method: (a, b) => Math.sqrt(a) },
+                // { symbol: '^', method: (a, b) => Math.pow(a, b) },
+                // { symbol: '!', method: (a, b) => {
+                //     let result = 1;
+                //     for (let i = 1; i <= a; i++) {
+                //         result *= i;
+                //     }
+                //     return result;
+                // }},
+                // { symbol: '∫', method: (a, b) => (a + b) / 2 },
+                // { symbol: '∑', method: (a, b) => a + b * (b + 1) / 2 },
+                // { symbol: '∏', method: (a, b) => {
+                //     let result = 1;
+                //     for (let i = a; i <= b; i++) {
+                //         result *= i;
+                //     }
+                //     return result;
+                // }},
+                // { symbol: 'log', method: (a, b) => Math.log(a) / Math.log(b) },
+                // { symbol: 'sin', method: (a, b) => Math.sin(a * Math.PI / 180) },
+                // { symbol: 'cos', method: (a, b) => Math.cos(a * Math.PI / 180) },
+                // { symbol: 'tan', method: (a, b) => Math.tan(a * Math.PI / 180) },
+                // { symbol: 'asin', method: (a, b) => Math.asin(a) * 180 / Math.PI },
+                // { symbol: 'acos', method: (a, b) => Math.acos(a) * 180 / Math.PI },
+                // { symbol: 'atan', method: (a, b) => Math.atan(a) * 180 / Math.PI },
+                // { symbol: 'gcd', method: (a, b) => {
+                //     const gcd = (x, y) => y === 0 ? x : gcd(y, x % y);
+                //     return gcd(a, b);
+                // }},
+                // { symbol: 'lcm', method: (a, b) => (a * b) / gcd(a, b) },
+                // { symbol: 'round', method: (a, b) => Math.round(a) },
+                // { symbol: 'max', method: (a, b) => Math.max(a, b) },
+                // { symbol: 'min', method: (a, b) => Math.min(a, b) },
+                // { symbol: 'avg', method: (a, b) => (a + b) / 2 },
+                // { symbol: 'median', method: (a, b) => {
+                //     const arr = [a, b].sort((x, y) => x - y);
+                //     return arr.length % 2 === 0 ? (arr[arr.length / 2 - 1] + arr[arr.length / 2]) / 2 : arr[Math.floor(arr.length / 2)];
+                // }},
+                // { symbol: 'mode', method: (a, b) => {
+                //     const freq = {};
+                //     [a, b].forEach(num => freq[num] = (freq[num] || 0) + 1);
+                //     return Object.keys(freq).reduce((a, b) => freq[a] > freq[b] ? a : b);
+                // }},
+                // { symbol: 'range', method: (a, b) => Math.max(a, b) - Math.min(a, b) },
+                // { symbol: 'percent', method: (a, b) => (a / b) * 100 },
+                // { symbol: 'factorial', method: (a, b) => {
+                //     let result = 1;
+                //     for (let i = 1; i <= a; i++) {
+                //         result *= i;
+                //     }
+                //     return result;
+                // }},
+                // { symbol: 'power', method: (a, b) => Math.pow(a, b) }
             ];
             
-            // Randomly select an operation
             const opIndex = Math.floor(Math.random() * operations.length);
             const operation = operations[opIndex];
             
-            // Generate numbers based on user settings
             let num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
             let num2 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
             
-            // For subtraction, ensure positive result
             if (operation.symbol === '-' && num1 < num2) {
                 [num1, num2] = [num2, num1];
             }
             
-            // For multiplication, keep numbers smaller to avoid large results
             if (operation.symbol === '×') {
                 num1 = Math.min(num1, 10);
                 num2 = Math.min(num2, 10);
             }
             
-            // Calculate correct answer
             correctAnswer = operation.method(num1, num2);
             currentQuestion = `${num1} ${operation.symbol} ${num2} = ?`;
             
-            // Update question display
             document.getElementById('questionBox').textContent = currentQuestion;
             
-            // Generate wrong answers
             answers = [correctAnswer];
             while (answers.length < 4) {
                 let wrongAnswer;
                 if (Math.random() > 0.5) {
-                    // Close but wrong answer
                     wrongAnswer = correctAnswer + Math.floor(Math.random() * 5) + 1;
                 } else {
-                    // More random wrong answer
                     wrongAnswer = Math.floor(Math.random() * (maxNum * 2)) + 1;
                 }
                 
-                // Ensure no duplicates and not negative for subtraction
                 if (!answers.includes(wrongAnswer) && wrongAnswer > 0) {
                     answers.push(wrongAnswer);
                 }
             }
             
-            // Shuffle answers
             answers.sort(() => Math.random() - 0.5);
         }
         
-        // Generate a counting question
         function generateCountingQuestion() {
-            // Select a random counting question
             const qIndex = Math.floor(Math.random() * countingQuestions.length);
             const question = countingQuestions[qIndex];
             
             currentQuestion = question.question + " " + question.image;
             correctAnswer = question.answer;
             
-            // Update question display
             document.getElementById('questionBox').textContent = currentQuestion;
             
-            // Generate wrong answers
             answers = [correctAnswer];
             for (let i = 0; i < question.wrongAnswers.length; i++) {
                 answers.push(question.wrongAnswers[i]);
             }
             
-            // Shuffle answers
             answers.sort(() => Math.random() - 0.5);
         }
         
-        // Generate a language question based on level
         function generateLanguageQuestion() {
             let questions = [];
             
@@ -758,22 +780,18 @@
                     break;
             }
             
-            // Randomly select a language question
             const qIndex = Math.floor(Math.random() * questions.length);
             const question = questions[qIndex];
             
             currentQuestion = question.question;
             correctAnswer = question.answers[0];
             
-            // Update question display
             document.getElementById('questionBox').textContent = currentQuestion;
             
-            // Shuffle answers
             answers = [...question.answers];
             answers.sort(() => Math.random() - 0.5);
         }
         
-        // Generate a new question based on game mode
         function generateQuestion() {
             if (gameMode === "math") {
                 generateMathQuestion();
@@ -781,7 +799,6 @@
                 generateLanguageQuestion();
             }
             
-            // Create answer elements
             answerElements = [];
             for (let i = 0; i < answers.length; i++) {
                 answerElements.push({
@@ -791,18 +808,16 @@
                     width: 70,
                     height: 50,
                     speed: 3 + Math.random() * 2,
-                    color: '#ff3366' // Same color for all answers
+                    color: '#ff3366'
                 });
             }
         }
         
-        // Draw player (Purple Monster) with enhanced features
         function drawPlayer() {
-            // Calculate current time for animations
             const currentTime = Date.now();
             
-            // Draw stick hands
-            ctx.strokeStyle = '#8A2BE2'; // Purple color
+            //hands
+            ctx.strokeStyle = '#8A2BE2';
             ctx.lineWidth = 8;
             ctx.lineCap = 'round';
             
@@ -818,7 +833,6 @@
             ctx.lineTo(player.x + player.width/2 + 40, player.y + player.height/2 + 20);
             ctx.stroke();
             
-            // Draw stick legs
             // Left leg
             ctx.beginPath();
             ctx.moveTo(player.x + player.width/2 - 15, player.y + player.height/2 + 30);
@@ -831,41 +845,37 @@
             ctx.lineTo(player.x + player.width/2 + 25, player.y + player.height/2 + 60);
             ctx.stroke();
             
-            // Draw monster body
-            ctx.fillStyle = '#8A2BE2'; // Purple base color
+            //body
+            ctx.fillStyle = '#8A2BE2'; 
             ctx.beginPath();
             ctx.arc(player.x + player.width/2, player.y + player.height/2, player.width/2, 0, Math.PI * 2);
             ctx.fill();
             
-            // Draw eyes
+            // eyes
             ctx.fillStyle = 'white';
             ctx.beginPath();
             ctx.arc(player.x + player.width/2 - 15, player.y + player.height/2 - 10, 12, 0, Math.PI * 2);
             ctx.arc(player.x + player.width/2 + 15, player.y + player.height/2 - 10, 12, 0, Math.PI * 2);
             ctx.fill();
             
-            // Draw pupils
+            // pupils
             ctx.fillStyle = '#333';
             ctx.beginPath();
             ctx.arc(player.x + player.width/2 - 15, player.y + player.height/2 - 10, 6, 0, Math.PI * 2);
             ctx.arc(player.x + player.width/2 + 15, player.y + player.height/2 - 10, 6, 0, Math.PI * 2);
             ctx.fill();
             
-            // Draw mouth with sharp teeth during bite animation
             if (isBiting && (currentTime - biteStartTime) < biteDuration) {
-                // Draw biting mouth with sharp teeth
                 const biteProgress = (currentTime - biteStartTime) / biteDuration;
                 const mouthWidth = 30;
                 const teethHeight = 15;
                 
-                // Draw mouth outline
                 ctx.strokeStyle = '#333';
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.arc(player.x + player.width/2, player.y + player.height/2 + 15, mouthWidth, 0.2, Math.PI - 0.2);
                 ctx.stroke();
                 
-                // Draw sharp teeth
                 ctx.fillStyle = 'white';
                 const toothCount = 5;
                 for (let i = 0; i < toothCount; i++) {
@@ -884,7 +894,6 @@
                     ctx.stroke();
                 }
             } else {
-                // Draw normal smiling mouth
                 ctx.strokeStyle = '#333';
                 ctx.lineWidth = 3;
                 ctx.beginPath();
@@ -893,31 +902,25 @@
             }
         }
         
-        // Trigger bite animation
         function triggerBite() {
             isBiting = true;
             biteStartTime = Date.now();
             playBiteSound();
             
-            // Automatically stop biting after duration
             setTimeout(() => {
                 isBiting = false;
             }, biteDuration);
         }
         
-        // Draw ground
         function drawGround() {
-            // Ground
             ctx.fillStyle = '#7CFC00';
             ctx.fillRect(0, ground.y, canvas.width, ground.height);
             
-            // Ground details
             ctx.fillStyle = '#5cb300';
             for (let i = 0; i < canvas.width; i += 40) {
                 ctx.fillRect(i, ground.y, 20, 10);
             }
             
-            // Ground border
             ctx.strokeStyle = '#3d7d00';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -926,30 +929,25 @@
             ctx.stroke();
         }
         
-        // Draw answers
         function drawAnswers() {
             for (let i = 0; i < answerElements.length; i++) {
                 const ans = answerElements[i];
                 
-                // Draw answer bubble
                 ctx.fillStyle = ans.color;
                 ctx.beginPath();
                 ctx.arc(ans.x, ans.y, ans.width/2, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // Draw white border
                 ctx.strokeStyle = 'white';
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.arc(ans.x, ans.y, ans.width/2, 0, Math.PI * 2);
                 ctx.stroke();
                 
-                // Draw answer text
                 ctx.fillStyle = 'white';
                 ctx.font = 'bold 20px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                // Wrap text if too long
                 const text = ans.value.toString();
                 if (text.length > 8) {
                     ctx.font = 'bold 16px Arial';
@@ -958,20 +956,16 @@
             }
         }
         
-        // Draw math background (blue sky with geometric patterns)
         function drawMathBackground() {
-            // Sky gradient
             const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
             gradient.addColorStop(0, '#87CEEB');
             gradient.addColorStop(1, '#1E90FF');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw geometric patterns
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
             ctx.lineWidth = 2;
             
-            // Draw grid lines
             for (let i = 0; i < canvas.width; i += 50) {
                 ctx.beginPath();
                 ctx.moveTo(i, 0);
@@ -986,8 +980,7 @@
                 ctx.stroke();
             }
             
-            // Draw mathematical symbols
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
             ctx.font = '30px Arial';
             for (let i = 0; i < 20; i++) {
                 const x = Math.random() * canvas.width;
@@ -998,28 +991,23 @@
             }
         }
         
-        // Draw language background (green nature scene)
         function drawLanguageBackground() {
-            // Sky gradient
             const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
             skyGradient.addColorStop(0, '#87CEEB');
             skyGradient.addColorStop(1, '#98FB98');
             ctx.fillStyle = skyGradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw sun
             ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
             ctx.beginPath();
             ctx.arc(canvas.width - 100, 100, 50, 0, Math.PI * 2);
             ctx.fill();
             
-            // Draw trees
             ctx.fillStyle = '#8B4513';
             for (let i = 0; i < 5; i++) {
                 const x = 100 + i * 200;
                 ctx.fillRect(x, canvas.height - 200, 20, 130);
                 
-                // Tree top
                 ctx.fillStyle = '#228B22';
                 ctx.beginPath();
                 ctx.arc(x + 10, canvas.height - 200, 60, 0, Math.PI * 2);
@@ -1027,13 +1015,11 @@
                 ctx.fillStyle = '#8B4513';
             }
             
-            // Draw grass
             ctx.fillStyle = '#90EE90';
             ctx.fillRect(0, canvas.height - 70, canvas.width, 70);
             
         }
         
-        // Draw background based on game mode
         function drawBackground() {
             if (gameMode === "math") {
                 drawMathBackground();
@@ -1042,110 +1028,86 @@
             }
         }
         
-        // Update game state
         function update() {
             if (!gameActive || levelComplete) return;
             
-            // Apply gravity
             player.velocityY += player.gravity;
             player.y += player.velocityY;
             
-            // Ground collision
             if (player.y + player.height > ground.y) {
                 player.y = ground.y - player.height;
                 player.velocityY = 0;
                 player.isJumping = false;
             }
             
-            // Screen boundaries
             if (player.x < 0) player.x = 0;
             if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
             
-            // Update answer positions
             for (let i = answerElements.length - 1; i >= 0; i--) {
                 const ans = answerElements[i];
                 ans.x -= ans.speed;
                 
-                // Remove answers that go off screen
                 if (ans.x + ans.width < 0) {
                     answerElements.splice(i, 1);
                     
-                    // If all answers are gone, regenerate question
                     if (answerElements.length === 0) {
                         generateQuestion();
                     }
                 }
                 
-                // Collision detection
                 const distX = Math.abs(player.x + player.width/2 - (ans.x));
                 const distY = Math.abs(player.y + player.height/2 - (ans.y));
                 const distance = Math.sqrt(distX * distX + distY * distY);
                 
                 if (distance < (player.width/2 + ans.width/2)) {
                     if (ans.value === correctAnswer) {
-                        // Correct answer collected
                         score += 10;
-                        correctStreak++; // Increment correct streak
-                        totalCorrectAnswers++; // Increment total correct answers
-                        questionsAnswered++; // Increment questions answered
+                        correctStreak++;
+                        totalCorrectAnswers++;
+                        questionsAnswered++; 
                         
                         document.getElementById('scoreBox').textContent = `Score: ${score}`;
                         
-                        // Create particle effect
                         createParticles(ans.x, ans.y, '#4cff00');
                         
-                        // Play correct sound and trigger bite animation
                         playCorrectSound();
                         triggerBite();
                         
-                        // Check for star rewards
                         checkStarRewards();
                         
-                        // Check for badge rewards
                         checkBadgeRewards();
                         
-                        // Remove collected answer
                         answerElements.splice(i, 1);
                         
-                        // Generate new question immediately
                         generateQuestion();
                         
-                        // Check for level completion (after 10 correct answers)
                         if (totalCorrectAnswers >= 10) {
                             completeLevel();
                         }
                     } else {
-                        // Wrong answer collected - lose a life
                         lives--;
-                        correctStreak = 0; // Reset streak
-                        questionsAnswered++; // Increment questions answered
+                        correctStreak = 0;
+                        questionsAnswered++;
                         
                         document.getElementById('livesBox').textContent = `Lives: ${lives}`;
                         createParticles(ans.x, ans.y, '#ff3366');
                         
-                        // Play wrong sound
                         playWrongSound();
                         
-                        // Remove collected answer
                         answerElements.splice(i, 1);
                         
-                        // Check if game over
                         if (lives <= 0) {
                             endGame();
                         } else {
-                            // Generate new question
                             generateQuestion();
                         }
                     }
                 }
             }
         }
-        
-        // Check for star rewards based on streaks and correct answers
+         
         function checkStarRewards() {
-            // Earn a star for every 3 correct answers in a row
             if (correctStreak > 0 && correctStreak % 3 === 0) {
-                // Only award star if we haven't already awarded one for this streak
                 if (correctStreak / 3 > earnedStars) {
                     earnedStars = Math.floor(correctStreak / 3);
                     playStarSound();
@@ -1153,7 +1115,6 @@
                 }
             }
             
-            // Also earn a star for every 5 total correct answers
             const starsFromTotal = Math.floor(totalCorrectAnswers / 5);
             if (starsFromTotal > earnedStars) {
                 earnedStars = starsFromTotal;
@@ -1162,10 +1123,8 @@
             }
         }
         
-        // Check for badge rewards
         function checkBadgeRewards() {
             for (const badge of badges) {
-                // Skip if already earned
                 if (earnedBadges.includes(badge.id)) continue;
                 
                 let earned = false;
@@ -1193,12 +1152,10 @@
             }
         }
         
-        // Update stars display
         function updateStarsDisplay() {
             const starsDisplay = document.getElementById('starsDisplay');
             starsDisplay.innerHTML = '';
             
-            // Display up to 5 stars
             for (let i = 0; i < 5; i++) {
                 const star = document.createElement('div');
                 star.className = i < earnedStars ? 'star' : 'star inactive';
@@ -1206,12 +1163,10 @@
             }
         }
         
-        // Update badges display
         function updateBadgesDisplay() {
             const badgesDisplay = document.getElementById('badgesDisplay');
             badgesDisplay.innerHTML = '';
             
-            // Display all badges
             for (const badge of badges) {
                 const badgeElement = document.createElement('div');
                 badgeElement.className = earnedBadges.includes(badge.id) ? 'badge' : 'badge locked';
@@ -1223,7 +1178,6 @@
             }
         }
         
-        // Complete level
         function completeLevel() {
             levelComplete = true;
             gameActive = false;
@@ -1231,11 +1185,9 @@
             document.getElementById('winText').textContent = `Congratulations! You answered ${totalCorrectAnswers} questions correctly with ${earnedStars} stars!`;
             document.getElementById('winScreen').style.display = 'block';
             
-            // Award level complete badge
             checkBadgeRewards();
         }
         
-        // Create particles for effects
         const particles = [];
         function createParticles(x, y, color) {
             for (let i = 0; i < 20; i++) {
@@ -1252,7 +1204,6 @@
             }
         }
         
-        // Update particles
         function updateParticles() {
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
@@ -1267,7 +1218,6 @@
             }
         }
         
-        // Draw particles
         function drawParticles() {
             for (const p of particles) {
                 ctx.globalAlpha = p.alpha;
@@ -1279,14 +1229,12 @@
             ctx.globalAlpha = 1;
         }
         
-        // End game function
         function endGame() {
             gameActive = false;
             document.getElementById('finalScore').textContent = `Score: ${score}`;
             document.getElementById('gameOver').style.display = 'block';
         }
         
-        // Reset game function
         function resetGame() {
             score = 0;
             lives = 3;
@@ -1305,22 +1253,19 @@
             document.getElementById('gameOver').style.display = 'none';
             document.getElementById('winScreen').style.display = 'none';
             particles.length = 0;
-            answerElements = []; // Clear existing answers
+            answerElements = [];
             updateStarsDisplay();
             updateBadgesDisplay();
             generateQuestion();
         }
         
-        // Start game function
         function startGame() {
-            // Get settings
             gameMode = document.getElementById('gameMode').value;
             
             if (gameMode === "math") {
                 minNum = parseInt(document.getElementById('minNum').value);
                 maxNum = parseInt(document.getElementById('maxNum').value);
                 
-                // Validate numbers
                 if (minNum >= maxNum) {
                     alert("Min number must be less than Max number!");
                     return;
@@ -1329,18 +1274,14 @@
                 languageLevel = document.getElementById('languageLevel').value;
             }
             
-            // Hide settings panel
             document.getElementById('settingsPanel').style.display = 'none';
             
-            // Start game
             gameActive = true;
             resetGame();
             
-            // Play background music
             playBackgroundMusic();
         }
         
-        // Jump function
         function jump() {
             if (!gameActive || levelComplete) return;
             if (!player.isJumping) {
@@ -1350,13 +1291,11 @@
             }
         }
         
-        // Move player
         function move(direction) {
             if (!gameActive || levelComplete) return;
             player.x += player.speed * direction;
         }
         
-        // Key bindings
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowUp' || e.key === ' ' || e.key === 'w') {
                 jump();
@@ -1369,13 +1308,11 @@
             }
         });
         
-        // Mobile touch controls
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
             jump();
         });
         
-        // Event listeners
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('restartBtn').addEventListener('click', () => {
             document.getElementById('gameOver').style.display = 'none';
@@ -1386,31 +1323,24 @@
             document.getElementById('settingsPanel').style.display = 'block';
         });
         
-        // Initialize displays
         updateStarsDisplay();
         updateBadgesDisplay();
         
-        // Main game loop
         function gameLoop() {
-            // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw everything
             drawBackground();
             drawGround();
             drawAnswers();
             drawPlayer();
             drawParticles();
             
-            // Update game state
             update();
             updateParticles();
             
-            // Continue game loop
             requestAnimationFrame(gameLoop);
         }
         
-        // Initialize game
         gameLoop();
     </script>
 </body>

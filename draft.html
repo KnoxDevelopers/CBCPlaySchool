@@ -242,7 +242,7 @@
         }
         #starsContainer {
             position: absolute;
-            top: 110px;
+            top: 100px;
             right: 20px;
             z-index: 10;
             background: rgba(0, 0, 0, 0.0);
@@ -352,11 +352,6 @@
         let questionsAnswered = 0; // Track total questions answered
         let levelComplete = false; // Track if level is complete
         
-        // Monster animation variables
-        let isBiting = false;
-        let biteStartTime = 0;
-        let biteDuration = 300; // 300ms bite animation
-        
         // Badge definitions
         const badges = [
             { id: "first_win", name: "First Win", description: "Answer 5 questions correctly", requirement: 5, type: "correct_total" },
@@ -416,24 +411,6 @@
             oscillator.frequency.setValueAtTime(330, audioCtx.currentTime); // E4
             oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1);
             gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-            
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + 0.2);
-        }
-        
-        function playBiteSound() {
-            if (!soundEnabled) return;
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            oscillator.type = 'sawtooth';
-            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
-            oscillator.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1); // A5
-            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
             
             oscillator.start(audioCtx.currentTime);
@@ -617,7 +594,7 @@
             },
             { 
                 question: "How many cats?",
-                image: "🐱🐱🐱🐱", // 4 cats
+                image: "🐱🐱🐱🐱", // 6 cats
                 answer: 4,
                 wrongAnswers: [6, 5, 7]
             },
@@ -629,13 +606,13 @@
             },
             { 
                 question: "How many dogs?",
-                image: "🐶🐶🐶🐶🐶", // 5 dogs
+                image: "🐶🐶🐶🐶🐶", // 8 dogs
                 answer: 5,
                 wrongAnswers: [6, 7, 9]
             },
             { 
                 question: "Count the birds:",
-                image: "🐦🐦🐦🐦", // 4 birds
+                image: "🐦🐦🐦🐦", // 9 birds
                 answer: 4,
                 wrongAnswers: [3, 5, 6]
             }
@@ -796,43 +773,11 @@
             }
         }
         
-        // Draw player (Purple Monster) with enhanced features
+        // Draw player (Purple Monster)
         function drawPlayer() {
-            // Calculate current time for animations
-            const currentTime = Date.now();
-            
-            // Draw stick hands
-            ctx.strokeStyle = '#8A2BE2'; // Purple color
-            ctx.lineWidth = 8;
-            ctx.lineCap = 'round';
-            
-            // Left arm
-            ctx.beginPath();
-            ctx.moveTo(player.x + player.width/2 - 20, player.y + player.height/2 - 10);
-            ctx.lineTo(player.x + player.width/2 - 40, player.y + player.height/2 + 20);
-            ctx.stroke();
-            
-            // Right arm
-            ctx.beginPath();
-            ctx.moveTo(player.x + player.width/2 + 20, player.y + player.height/2 - 10);
-            ctx.lineTo(player.x + player.width/2 + 40, player.y + player.height/2 + 20);
-            ctx.stroke();
-            
-            // Draw stick legs
-            // Left leg
-            ctx.beginPath();
-            ctx.moveTo(player.x + player.width/2 - 15, player.y + player.height/2 + 30);
-            ctx.lineTo(player.x + player.width/2 - 25, player.y + player.height/2 + 60);
-            ctx.stroke();
-            
-            // Right leg
-            ctx.beginPath();
-            ctx.moveTo(player.x + player.width/2 + 15, player.y + player.height/2 + 30);
-            ctx.lineTo(player.x + player.width/2 + 25, player.y + player.height/2 + 60);
-            ctx.stroke();
+            ctx.fillStyle = '#8A2BE2'; // Purple base color
             
             // Draw monster body
-            ctx.fillStyle = '#8A2BE2'; // Purple base color
             ctx.beginPath();
             ctx.arc(player.x + player.width/2, player.y + player.height/2, player.width/2, 0, Math.PI * 2);
             ctx.fill();
@@ -851,58 +796,12 @@
             ctx.arc(player.x + player.width/2 + 15, player.y + player.height/2 - 10, 6, 0, Math.PI * 2);
             ctx.fill();
             
-            // Draw mouth with sharp teeth during bite animation
-            if (isBiting && (currentTime - biteStartTime) < biteDuration) {
-                // Draw biting mouth with sharp teeth
-                const biteProgress = (currentTime - biteStartTime) / biteDuration;
-                const mouthWidth = 30;
-                const teethHeight = 15;
-                
-                // Draw mouth outline
-                ctx.strokeStyle = '#333';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(player.x + player.width/2, player.y + player.height/2 + 15, mouthWidth, 0.2, Math.PI - 0.2);
-                ctx.stroke();
-                
-                // Draw sharp teeth
-                ctx.fillStyle = 'white';
-                const toothCount = 5;
-                for (let i = 0; i < toothCount; i++) {
-                    const toothX = player.x + player.width/2 - mouthWidth + (i * (mouthWidth * 2) / (toothCount - 1));
-                    const toothY = player.y + player.height/2 + 15;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(toothX - 4, toothY);
-                    ctx.lineTo(toothX, toothY - teethHeight);
-                    ctx.lineTo(toothX + 4, toothY);
-                    ctx.closePath();
-                    ctx.fill();
-                    
-                    ctx.strokeStyle = '#ccc';
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                }
-            } else {
-                // Draw normal smiling mouth
-                ctx.strokeStyle = '#333';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(player.x + player.width/2, player.y + player.height/2 + 10, 20, 0.2, Math.PI - 0.2);
-                ctx.stroke();
-            }
-        }
-        
-        // Trigger bite animation
-        function triggerBite() {
-            isBiting = true;
-            biteStartTime = Date.now();
-            playBiteSound();
-            
-            // Automatically stop biting after duration
-            setTimeout(() => {
-                isBiting = false;
-            }, biteDuration);
+            // Draw mouth
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(player.x + player.width/2, player.y + player.height/2 + 10, 20, 0.2, Math.PI - 0.2);
+            ctx.stroke();
         }
         
         // Draw ground
@@ -1094,9 +993,8 @@
                         // Create particle effect
                         createParticles(ans.x, ans.y, '#4cff00');
                         
-                        // Play correct sound and trigger bite animation
+                        // Play correct sound
                         playCorrectSound();
-                        triggerBite();
                         
                         // Check for star rewards
                         checkStarRewards();
@@ -1296,7 +1194,6 @@
             totalCorrectAnswers = 0;
             questionsAnswered = 0;
             earnedStars = 0;
-            isBiting = false;
             player.x = 100;
             player.y = canvas.height - 150;
             player.velocityY = 0;

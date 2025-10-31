@@ -1,0 +1,289 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+#gameContainer {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#uiContainer {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border-radius: 15px;
+    color: white;
+    max-width: 300px;
+}
+
+#questionBox {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #ffcc00;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+#scoreBox {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #4cff00;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+#livesBox {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ff3366;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+#gameOver {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    z-index: 100;
+    display: none;
+    border: 3px solid #ff0000;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+}
+
+#finalScore {
+    font-size: 2.5em;
+    color: #ffcc00;
+    margin: 20px 0;
+}
+
+#restartBtn {
+    background: linear-gradient(to bottom, #ff3366, #cc0066);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+#restartBtn:hover {
+    background: linear-gradient(to bottom, #ff6699, #ff0066);
+    transform: scale(1.05);
+}
+
+#instructions {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    max-width: 300px;
+}
+
+#settingsPanel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    z-index: 100;
+    border: 3px solid #4cff00;
+    box-shadow: 0 0 30px rgba(76, 255, 0, 0.5);
+}
+
+#settingsPanel h2 {
+    color: #ffcc00;
+    margin-top: 0;
+}
+
+.setting-group {
+    margin: 15px 0;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+input,
+select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 2px solid #4cff00;
+    background: #333;
+    color: white;
+    font-size: 1em;
+    width: 100px;
+    text-align: center;
+}
+
+#startBtn {
+    background: linear-gradient(to bottom, #4cff00, #33cc00);
+    color: black;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    margin-top: 20px;
+}
+
+#startBtn:hover {
+    background: linear-gradient(to bottom, #66ff33, #4cff00);
+    transform: scale(1.05);
+}
+
+#mathSettings {
+    display: block;
+}
+
+#languageSettings {
+    display: none;
+}
+
+canvas {
+    display: block;
+}
+
+#soundToggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 2px solid #4cff00;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 20;
+}
+
+#winScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    z-index: 100;
+    display: none;
+    border: 3px solid #4cff00;
+    box-shadow: 0 0 30px rgba(76, 255, 0, 0.5);
+}
+
+#winMessage {
+    font-size: 2em;
+    color: #4cff00;
+    margin-bottom: 20px;
+}
+
+#nextLevelBtn {
+    background: linear-gradient(to bottom, #4cff00, #33cc00);
+    color: black;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    margin-top: 20px;
+}
+
+#nextLevelBtn:hover {
+    background: linear-gradient(to bottom, #66ff33, #4cff00);
+    transform: scale(1.05);
+}
+
+#badgesContainer {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.0);
+    padding: 10px;
+    border-radius: 15px;
+    color: black;
+    min-width: 150px;
+}
+
+.badge {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background: #ffcc00;
+    border-radius: 50%;
+    margin: 5px;
+    text-align: center;
+    line-height: 40px;
+    font-weight: bold;
+    color: black;
+    box-shadow: 0 0 5px rgba(255, 204, 0, 0.8);
+}
+
+.badge.locked {
+    background: #666;
+    color: #999;
+    box-shadow: none;
+}
+
+#starsContainer {
+    position: absolute;
+    top: 110px;
+    right: 20px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.0);
+    padding: 10px;
+    border-radius: 15px;
+    color: black;
+    min-width: 150px;
+}
+
+.star {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: #ffcc00;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    margin: 5px;
+}
+
+.star.inactive {
+    background: #666;
+}

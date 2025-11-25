@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CBC Play School - An engaging educational CBC game for Play group PP1 and PP2 kids. CBC Kenya game, fun learning games, kids game Kenya, CBC game resources.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <meta name="description" content="CBC Play School - An engaging educational CBC game for Play group PP1 and PP2 kids. CBC Kenya game, fun learning games, kids game Kenya, CBC game resources.">
     <title>CBC Play School</title>
-    <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
     <div id="gameContainer">
@@ -70,6 +68,14 @@
             <button id="startBtn">Start Game</button>
         </div>
         <button id="soundToggle">🔊</button>
+
+        <div id="mobileControls">
+            <div class="controls-left">
+                <div class="control-btn" id="btnLeft">⬅️</div>
+                <div class="control-btn" id="btnRight">➡️</div>
+            </div>
+            <div class="control-btn" id="btnJump">⬆️</div>
+        </div>
     </div>
 
     <script>
@@ -96,8 +102,9 @@
         let isBiting = false;
         let biteStartTime = 0;
         let biteDuration = 300; 
+        let isMovingLeft = false;
+        let isMovingRight = false;
         
-        // Badge definitions
         const badges = [
             { id: "first_win", name: "First Win", description: "Answer 5 questions correctly", requirement: 5, type: "correct_total" },
             { id: "streak_master", name: "Streak Master", description: "Get 3 correct answers in a row", requirement: 3, type: "streak" },
@@ -105,7 +112,7 @@
             { id: "star_collector", name: "Star Collector", description: "Earn 3 stars", requirement: 3, type: "stars" }
         ];
         
-       
+        
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
         
@@ -239,7 +246,7 @@
             oscillator.stop(audioCtx.currentTime + 0.6);
         }
         
-        // Canvas setup
+        // Canvas
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         document.getElementById('gameContainer').appendChild(canvas);
@@ -247,28 +254,35 @@
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            ground.y = canvas.height - 70;
+            if(player.y > ground.y - player.height) {
+                player.y = ground.y - player.height;
+            }
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
         
         //Purple Monster
         const player = {
             x: 100,
-            y: canvas.height - 150,
+            y: 0,
             width: 80,
             height: 80,
             velocityY: 0,
-            jumpPower: -29,
-            gravity: 0.8,
+            jumpPower: -25,
+            gravity: 0.9,
             speed: 8,
             isJumping: false
         };
         
         // Ground
         const ground = {
-            y: canvas.height - 70,
+            y: 0, 
             height: 70
         };
+        
+        resizeCanvas();
+        player.y = ground.y - player.height;
+
+        window.addEventListener('resize', resizeCanvas);
         
         const playGroupQuestions = [
             { question: "What color is the sky?", answers: ["Blue", "Green", "Red", "Yellow"] },
@@ -543,10 +557,12 @@
             }
             
             answerElements = [];
+            const spacing = Math.max(250, canvas.width / 3.5);
+
             for (let i = 0; i < answers.length; i++) {
                 answerElements.push({
                     value: answers[i],
-                    x: canvas.width + i * 300,
+                    x: canvas.width + i * spacing,
                     y: Math.random() * (canvas.height - 250) + 50,
                     width: 70,
                     height: 50,
@@ -688,13 +704,11 @@
                 ctx.stroke();
                 
                 ctx.fillStyle = 'white';
-                ctx.font = 'bold 20px Arial';
+                const fontSize = Math.min(20, Math.max(14, canvas.width / 40));
+                ctx.font = `bold ${fontSize}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 const text = ans.value.toString();
-                if (text.length > 8) {
-                    ctx.font = 'bold 16px Arial';
-                }
                 ctx.fillText(text, ans.x, ans.y);
             }
         }
@@ -777,6 +791,13 @@
             player.velocityY += player.gravity;
             player.y += player.velocityY;
             
+            if (isMovingLeft) {
+                player.x -= player.speed;
+            }
+            if (isMovingRight) {
+                player.x += player.speed;
+            }
+
             if (player.y + player.height > ground.y) {
                 player.y = ground.y - player.height;
                 player.velocityY = 0;
@@ -848,7 +869,7 @@
                 }
             }
         }
-         
+            
         function checkStarRewards() {
             if (correctStreak > 0 && correctStreak % 3 === 0) {
                 if (correctStreak / 3 > earnedStars) {
@@ -989,8 +1010,11 @@
             earnedStars = 0;
             isBiting = false;
             player.x = 100;
-            player.y = canvas.height - 150;
+            player.y = ground.y - player.height;
             player.velocityY = 0;
+            isMovingLeft = false;
+            isMovingRight = false;
+            
             document.getElementById('scoreBox').textContent = `Score: ${score}`;
             document.getElementById('livesBox').textContent = `Lives: ${lives}`;
             document.getElementById('gameOver').style.display = 'none';
@@ -1043,18 +1067,51 @@
             if (e.key === 'ArrowUp' || e.key === ' ' || e.key === 'w') {
                 jump();
             } else if (e.key === 'ArrowLeft' || e.key === 'a') {
-                move(-1);
+                isMovingLeft = true;
             } else if (e.key === 'ArrowRight' || e.key === 'd') {
-                move(1);
+                isMovingRight = true;
             } else if (e.key === 'r') {
                 if (!gameActive) resetGame();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') {
+                isMovingLeft = false;
+            } else if (e.key === 'ArrowRight' || e.key === 'd') {
+                isMovingRight = false;
             }
         });
         
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            jump();
-        });
+            if(e.target.tagName !== 'BUTTON' && e.target.className !== 'control-btn') {
+               jump();
+            }
+        }, {passive: false});
+
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        const btnJump = document.getElementById('btnJump');
+
+        btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingLeft = true; });
+        btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); isMovingLeft = false; });
+        
+        btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingRight = true; });
+        btnRight.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; });
+
+        btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
+
+        btnLeft.addEventListener('mousedown', () => isMovingLeft = true);
+        btnLeft.addEventListener('mouseup', () => isMovingLeft = false);
+        btnLeft.addEventListener('mouseleave', () => isMovingLeft = false);
+
+        btnRight.addEventListener('mousedown', () => isMovingRight = true);
+        btnRight.addEventListener('mouseup', () => isMovingRight = false);
+        btnRight.addEventListener('mouseleave', () => isMovingRight = false);
+        
+        btnJump.addEventListener('mousedown', () => jump());
+
         
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('restartBtn').addEventListener('click', () => {

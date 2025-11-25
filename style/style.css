@@ -3,6 +3,7 @@ body {
     padding: 0;
     overflow: hidden;
     font-family: 'Comic Sans MS', cursive, sans-serif;
+    touch-action: none;
 }
 
 #gameContainer {
@@ -21,6 +22,7 @@ body {
     border-radius: 15px;
     color: white;
     max-width: 300px;
+    transition: all 0.3s;
 }
 
 #questionBox {
@@ -44,7 +46,9 @@ body {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
-#gameOver {
+#gameOver,
+#winScreen,
+#settingsPanel {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -55,9 +59,23 @@ body {
     border-radius: 20px;
     text-align: center;
     z-index: 100;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    width: 80%;
+    max-width: 400px;
+}
+
+#gameOver {
     display: none;
     border: 3px solid #ff0000;
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+}
+
+#winScreen {
+    display: none;
+    border: 3px solid #4cff00;
+}
+
+#settingsPanel {
+    border: 3px solid #4cff00;
 }
 
 #finalScore {
@@ -66,9 +84,7 @@ body {
     margin: 20px 0;
 }
 
-#restartBtn {
-    background: linear-gradient(to bottom, #ff3366, #cc0066);
-    color: white;
+button {
     border: none;
     padding: 15px 30px;
     font-size: 1.2em;
@@ -79,10 +95,21 @@ body {
     letter-spacing: 1px;
     transition: all 0.3s;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    margin-top: 20px;
 }
 
-#restartBtn:hover {
-    background: linear-gradient(to bottom, #ff6699, #ff0066);
+#restartBtn {
+    background: linear-gradient(to bottom, #ff3366, #cc0066);
+    color: white;
+}
+
+#startBtn,
+#nextLevelBtn {
+    background: linear-gradient(to bottom, #4cff00, #33cc00);
+    color: black;
+}
+
+button:hover {
     transform: scale(1.05);
 }
 
@@ -96,26 +123,6 @@ body {
     border-radius: 10px;
     font-size: 0.9em;
     max-width: 300px;
-}
-
-#settingsPanel {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.85);
-    color: white;
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    z-index: 100;
-    border: 3px solid #4cff00;
-    box-shadow: 0 0 30px rgba(76, 255, 0, 0.5);
-}
-
-#settingsPanel h2 {
-    color: #ffcc00;
-    margin-top: 0;
 }
 
 .setting-group {
@@ -140,35 +147,6 @@ select {
     text-align: center;
 }
 
-#startBtn {
-    background: linear-gradient(to bottom, #4cff00, #33cc00);
-    color: black;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    margin-top: 20px;
-}
-
-#startBtn:hover {
-    background: linear-gradient(to bottom, #66ff33, #4cff00);
-    transform: scale(1.05);
-}
-
-#mathSettings {
-    display: block;
-}
-
-#languageSettings {
-    display: none;
-}
-
 canvas {
     display: block;
 }
@@ -186,60 +164,16 @@ canvas {
     font-size: 20px;
     cursor: pointer;
     z-index: 20;
-}
-
-#winScreen {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.85);
-    color: white;
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    z-index: 100;
-    display: none;
-    border: 3px solid #4cff00;
-    box-shadow: 0 0 30px rgba(76, 255, 0, 0.5);
-}
-
-#winMessage {
-    font-size: 2em;
-    color: #4cff00;
-    margin-bottom: 20px;
-}
-
-#nextLevelBtn {
-    background: linear-gradient(to bottom, #4cff00, #33cc00);
-    color: black;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    margin-top: 20px;
-}
-
-#nextLevelBtn:hover {
-    background: linear-gradient(to bottom, #66ff33, #4cff00);
-    transform: scale(1.05);
+    margin-top: 0;
 }
 
 #badgesContainer {
     position: absolute;
     top: 20px;
-    right: 20px;
+    right: 80px;
     z-index: 10;
     background: rgba(0, 0, 0, 0.0);
     padding: 10px;
-    border-radius: 15px;
-    color: black;
     min-width: 150px;
 }
 
@@ -268,11 +202,6 @@ canvas {
     top: 110px;
     right: 20px;
     z-index: 10;
-    background: rgba(0, 0, 0, 0.0);
-    padding: 10px;
-    border-radius: 15px;
-    color: black;
-    min-width: 150px;
 }
 
 .star {
@@ -286,4 +215,82 @@ canvas {
 
 .star.inactive {
     background: #666;
+}
+
+#mobileControls {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    display: none;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 50;
+}
+
+.control-btn {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    color: white;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.control-btn:active {
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0.95);
+}
+
+.controls-left {
+    display: flex;
+    gap: 15px;
+}
+
+@media (max-width: 768px) {
+    #mobileControls {
+        display: flex;
+    }
+
+    #instructions {
+        display: none;
+    }
+
+    #uiContainer {
+        padding: 10px;
+        max-width: 200px;
+    }
+
+    #questionBox {
+        font-size: 1.1em;
+    }
+
+    #scoreBox {
+        font-size: 1.3em;
+    }
+
+    #livesBox {
+        font-size: 1.1em;
+    }
+
+    #badgesContainer {
+        top: 70px;
+        right: 10px;
+        transform: scale(0.8);
+        transform-origin: top right;
+    }
+
+    #starsContainer {
+        top: 150px;
+        right: 10px;
+        transform: scale(0.8);
+        transform-origin: top right;
+    }
 }

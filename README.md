@@ -1,4 +1,4 @@
-## COMPETENCY BASED CURRICULUM (CBC) GAME - CBC Play School
+## COMPETENCY BASED CURRICULUM (CBC) PC GAME - CBC Play School
 
 ### Background
 Teaching is the cornerstone of every school's success, it isn’t just about standing in front of a chalkboard anymore. The right strategies can significantly impact student achievement, improve critical thinking, improve problem-solving and foster a collaborative and engaging learning mindset & environment.
